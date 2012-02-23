@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="js/jsonquery.js"></script>
+</head>
+<body>
+<script>
+$(document).ready(function() {
+
+	$.getJSON("test.json", function(data) {
+		// Get all the entities that are people
+		console.log($(data).jsonquery().values_with_key('entity').objects_with_value(['xsd:QName', 'Person']).result());
+		// Get all wasGeneratedBy with prov:entity of e0
+		console.log($(data).jsonquery().values_with_key('wasGeneratedBy').objects_with_key_value('prov:entity', 'ex:e0').result());
+
+		// First get all people
+		var people = $(data).jsonquery().values_with_key('entity').objects_with_value(['xsd:QName', 'Person']).result();
+		// Then get all wasAssociatedWith that have that person as an agent
+		$.each(people, function(index, person) {
+			console.log($(data).jsonquery().values_with_key('wasAssociatedWith').objects_with_key_value('prov:agent', person.__key).values_with_key('role').result());
+		});
+
+	});
+});
+</script>
+</body>
+</html>
